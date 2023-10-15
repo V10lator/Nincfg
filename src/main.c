@@ -562,6 +562,7 @@ switchVidMaskLeft:
 
             WHBLogPrint("");
             WHBLogPrint(infoTexts[cursor]);
+            WHBLogPrint("Press (+) to save, (-) or (HOME) to exit");
 
             WHBLogConsoleDraw();
         }
