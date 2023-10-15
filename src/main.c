@@ -89,16 +89,9 @@ static char *getVidMode(uint32_t vidMode)
 {
     uint32_t vidMask = vidMode;
     vidMask >>= 16;
-    --vidMask;
 
     if(vidMask & (NIN_VID_INDEX_FORCE | NIN_VID_INDEX_FORCE_DF))
-    {
-        if(vidMask & NIN_VID_INDEX_FORCE_DF)
-            vidMask &= ~(NIN_VID_INDEX_FORCE);
-
-        uint32_t forceMask = vidMode & NIN_VID_FORCE_MASK;
-        snprintf(sizeStr, 31, "%s %s", VideoStrings[vidMask], VideoModeStrings[--forceMask]);
-    }
+        snprintf(sizeStr, 31, "%s %s", VideoStrings[vidMask], VideoModeStrings[vidMode & NIN_VID_FORCE_MASK]);
     else
         snprintf(sizeStr, 31, "%s", VideoStrings[vidMask]);
 
@@ -410,24 +403,20 @@ void mainLoop()
                     mask = 0;
                     uint32_t vidMask = cfg->VideoMode;
                     vidMask >>= 16;
-                    --vidMask;
 
                     uint32_t forceMask = cfg->VideoMode & NIN_VID_FORCE_MASK;
-                    --forceMask;
 
                     if(buttons & VPAD_BUTTON_RIGHT)
                     {
                         if(vidMask & (NIN_VID_INDEX_FORCE | NIN_VID_INDEX_FORCE_DF))
                         {
                             if(++forceMask == NIN_VID_INDEX_FORCE_MPAL + 1)
-                            {
-                                forceMask = NIN_VID_INDEX_FORCE_PAL50;
                                 goto switchVidMaskRight;
-                            }
                         }
                         else
                         {
 switchVidMaskRight:
+                            forceMask = NIN_VID_INDEX_FORCE_PAL50;
                             switch(vidMask)
                             {
                                 case NIN_VID_INDEX_AUTO:
@@ -450,14 +439,12 @@ switchVidMaskRight:
                         if(vidMask & (NIN_VID_INDEX_FORCE | NIN_VID_INDEX_FORCE_DF))
                         {
                             if(--forceMask == (uint32_t)-1)
-                            {
-                                forceMask = NIN_VID_INDEX_FORCE_MPAL;
                                 goto switchVidMaskLeft;
-                            }
                         }
                         else
                         {
 switchVidMaskLeft:
+                            forceMask = NIN_VID_INDEX_FORCE_MPAL;
                             switch(vidMask)
                             {
                                 case NIN_VID_INDEX_AUTO:
@@ -476,9 +463,8 @@ switchVidMaskLeft:
                         }
                     }
 
-                    ++vidMask;
                     vidMask <<= 16;
-                    cfg->VideoMode = vidMask | ++forceMask;
+                    cfg->VideoMode = vidMask | forceMask;
 
                     break;
                 case 10:
