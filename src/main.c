@@ -464,7 +464,9 @@ switchVidMaskLeft:
                     }
 
                     vidMask <<= 16;
-                    cfg->VideoMode = vidMask | forceMask;
+                    vidMask |= forceMask;
+                    cfg->VideoMode &= ~(NIN_VID_MASK | NIN_VID_FORCE_MASK); // Delete original settings w/o deleting extended settings
+                    cfg->VideoMode |= vidMask; // Set new settings w/o deleting extended settings
 
                     break;
                 case 10:
